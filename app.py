@@ -10,7 +10,7 @@ import json
 # =============================
 app = Flask(
     __name__,
-    template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
+    template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'template'),
     static_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
 )
 CORS(app)
@@ -18,7 +18,7 @@ CORS(app)
 # =============================
 # Load trained model
 # =============================
-MODEL_PATH = os.path.join("models/", "salary_predictor.pkl")
+MODEL_PATH = os.path.join(os.getcwd(), 'models', 'salary_predictor.pkl')
 model = joblib.load(MODEL_PATH)
 
 # Features used during training

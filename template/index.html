@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 
 <body>
@@ -179,7 +180,6 @@
         <p>© 2025 EarnIt: Salary Prediction Project by Team Innovative Geeks</p>
     </footer>
 
-    <script src="../static/script.js" defer></script>
 </body>
 
 </html>
