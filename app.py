@@ -10,8 +10,8 @@ import json
 # =============================
 app = Flask(
     __name__,
-    template_folder="../templates",
-    static_folder="../static"
+    template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
+    static_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
 )
 CORS(app)
 
