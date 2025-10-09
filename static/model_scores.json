@@ -1,0 +1,8 @@
+{
+    "Linear Regression": 0.8289,
+    "Random Forest": 0.9236,
+    "Gradient Boosting": 0.9352,
+    "HistGradientBoosting": 0.9328,
+    "Support Vector Regressor": -0.0896,
+    "KNN": 0.8843
+}

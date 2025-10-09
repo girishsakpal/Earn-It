@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>EarnIt — Salary Predictor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../static/style.css" />
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div>
+                <img src="../static/EI.png" alt="💼">
+                <h1>EarnIt: Salary Predictor</h1>
+            </div>
+            <div class="controls">
+                <button id="themeToggle" aria-label="Toggle theme">🌗</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-left">
+                <h2>About EarnIt</h2>
+                <p>
+                    EarnIt predicts salary ranges using ML models trained on developer & industry salary data.
+                    It's useful for career planning, negotiations, and benchmarking yourself vs peers.
+                </p>
+                <h3>Why use this?</h3>
+                <ul>
+                    <li>Fast salary range estimate in realistic ranges.</li>
+                    <li>Compare yourself to average salaries by profession.</li>
+                    <li>Clear visualizations: average by profession, and salary vs experience curves.</li>
+                </ul>
+
+                <h3>Algorithms Tested</h3>
+                <ul class="algos">
+                    <li>Linear Regression</li>
+                    <li>Random Forest Regressor</li>
+                    <li>XGBoost / Gradient Boosting</li>
+                    <li>Ensemble (stacking) for final prediction</li>
+                </ul>
+
+                <h3>Algorithm Used</h3>
+                <p class="muted">✅ Best Model: Gradient Boosting (R²=0.9352)</p>
+
+                <h3>Quick Tip</h3>
+                <p class="muted">Higher education, certifications, and targeted skills often boost salary more than a
+                    single
+                    year of experience.</p>
+            </div>
+
+            <aside class="hero-right">
+                <div class="card form-card">
+                    <h2>Predict Your Salary</h2>
+                    <form id="predictForm" class="predict-form" autocomplete="off">
+                        <label for="Age">Age</label>
+                        <input id="Age" type="number" min="18" max="80" required />
+
+                        <label for="Gender">Gender</label>
+                        <select id="Gender" required>
+                            <option value="">-- Select --</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+
+                        <label for="EducationLevel">Education Level</label>
+                        <select id="EducationLevel" required>
+                            <option value="">-- Select --</option>
+                            <option>High School</option>
+                            <option>Bachelors</option>
+                            <option>Masters</option>
+                            <option>PhD</option>
+                        </select>
+
+                        <label for="JobTitle">Job Title</label>
+                        <select id="JobTitle" required>
+                            <option value="">-- Select --</option>
+                            <option>Software Engineer</option>
+                            <option>Data Scientist</option>
+                            <option>Doctor</option>
+                            <option>Teacher</option>
+                            <option>Accountant</option>
+                            <option>Lawyer</option>
+                        </select>
+
+                        <label for="Experience">Years of Experience</label>
+                        <input id="Experience" type="number" min="0" max="60" required />
+
+                        <label for="CompanyTier">Company Tier</label>
+                        <select id="CompanyTier" required>
+                            <option value="">-- Select --</option>
+                            <option>MNC</option>
+                            <option>Mid-size</option>
+                            <option>Startup</option>
+                        </select>
+
+                        <label for="City">City</label>
+                        <select id="City" required>
+                            <option value="">-- Select --</option>
+                            <option>Bangalore</option>
+                            <option>Mumbai</option>
+                            <option>Delhi</option>
+                            <option>Pune</option>
+                            <option>Hyderabad</option>
+                            <option>Chennai</option>
+                            <option>Kolkata</option>
+                            <option>Other</option>
+                        </select>
+
+
+                        <!-- Hidden fields for tech jobs -->
+                        <div id="techFields" style="display:none;">
+                            <label for="SkillCount">Number of Skills</label>
+                            <input id="SkillCount" type="number" min="0" value="0" />
+
+                            <label for="Certification">Number of Certifications</label>
+                            <input id="Certification" type="number" min="0" value="0" />
+                        </div>
+
+                        <button type="submit" class="btn-primary">Predict Salary</button>
+                        <div id="result" class="result"></div>
+                        <div id="recommendationBox" class="recommendation">Predict for Recommendation</div>
+                    </form>
+                </div>
+            </aside>
+        </section>
+
+        <br>
+        <section class="visuals">
+            <h2>Visualizations & Comparison</h2>
+            <div class="charts-grid">
+                <div class="card chart-card">
+                    <h4 style="margin-bottom: 50px;">Average Salary per Profession (LPA)</h4>
+                    <canvas id="avgByProfChart" height="220"></canvas>
+                </div>
+
+                <div class="card chart-card">
+                    <h4 style="margin-bottom: 50px;">Salary vs Experience</h4>
+                    <canvas id="salaryExpChart" height="220"></canvas>
+                </div>
+
+                <div class="card chart-card">
+                    <h4>Your Prediction vs Profession Avg</h4>
+                    <div id="compareInfo" class="compare-info">Make a prediction to see comparison.</div>
+                    <canvas id="compareChart" height="140"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="model-visuals" style="margin-top: 20px;">
+            <h2>Model Visualizations</h2>
+            <div class="charts-grid" id="modelImages">
+                <!-- Images from static folder will be dynamically inserted here with captions -->
+            </div>
+        </section>
+
+        <section class="how-use mod_comp">
+            <img src="../static/model_comparison.png" alt="">
+        </section>
+
+        <section class="how-use">
+            <h2>How this website is useful for everyone?</h2>
+            <ol>
+                <li>Students & freshers: Set realistic salary expectations.</li>
+                <li>Job seekers: Benchmark offers and prepare for negotiations.</li>
+                <li>Career switchers: Compare industries and see expected earnings at different experience levels.</li>
+            </ol>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2025 EarnIt: Salary Prediction Project by Team Innovative Geeks</p>
+    </footer>
+
+    <script src="../static/script.js" defer></script>
+</body>
+
+</html>
