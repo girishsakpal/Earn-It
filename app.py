@@ -9,7 +9,7 @@ import json
 # Absolute paths setup
 # =============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # project root (where app.py is)
-TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'template')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'salary_predictor.pkl')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
