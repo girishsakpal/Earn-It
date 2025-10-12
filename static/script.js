@@ -156,87 +156,92 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------- Form submit ----------
-    document.getElementById('predictForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+    document.getElementById('predictForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-    const $ = (id) => document.getElementById(id);
+        const $ = (id) => document.getElementById(id);
 
-    // Read form values
-    const age = parseInt($('Age').value);
-    const gender = $('Gender').value;
-    const education = $('EducationLevel').value;
-    const job = $('JobTitle').value;
-    const experience = parseInt($('Experience').value);
-    const company = $('CompanyTier').value;
-    const city = $('City').value;
-    const skills = (job === 'Software Engineer' || job === 'Data Scientist') ? parseInt($('SkillCount').value) || 0 : 0;
-    const certifications = (job === 'Software Engineer' || job === 'Data Scientist') ? parseInt($('Certification').value) || 0 : 0;
+        // Read form values
+        const age = parseInt($('Age').value);
+        const gender = $('Gender').value;
+        const education = $('EducationLevel').value;
+        const job = $('JobTitle').value;
+        const experience = parseInt($('Experience').value);
+        const company = $('CompanyTier').value;
+        const city = $('City').value;
+        const skills = (job === 'Software Engineer' || job === 'Data Scientist') ? parseInt($('SkillCount').value) || 0 : 0;
+        const certifications = (job === 'Software Engineer' || job === 'Data Scientist') ? parseInt($('Certification').value) || 0 : 0;
 
-    // Prepare payload
-    const payload = {
-        "Age": age,
-        "Gender": gender,
-        "Education Level": education,
-        "Job Title": job,
-        "Years of Experience": experience,
-        "Company Tier": company,
-        "City": city,
-        "Skill Count": skills,
-        "Certification": certifications
-    };
+        // Prepare payload
+        const payload = {
+            "Age": age,
+            "Gender": gender,
+            "Education Level": education,
+            "Job Title": job,
+            "Years of Experience": experience,
+            "Company Tier": company,
+            "City": city,
+            "Skill Count": skills,
+            "Certification": certifications
+        };
 
-    try {
-        const res = await fetch('/predict', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        try {
+            const res = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        if (!res.ok) {
-            $('result').innerHTML = `⚠️ Server error: ${res.status} ${await res.text()}`;
-            return;
-        }
+            if (!res.ok) {
+                $('result').innerHTML = `⚠️ Server error: ${res.status} ${await res.text()}`;
+                return;
+            }
 
-        const result = await res.json();
+            const result = await res.json();
 
-        if (result.lower_lpa == null || result.upper_lpa == null) {
-            $('result').innerHTML = `⚠️ Unexpected response from server.`;
-            return;
-        }
+            if (result.lower_lpa == null || result.upper_lpa == null) {
+                $('result').innerHTML = `⚠️ Unexpected response from server.`;
+                return;
+            }
 
-        // Show predicted salary range
-        $('result').innerHTML = `💰 Estimated Salary Range: <strong>${result.lower_lpa} LPA – ${result.upper_lpa} LPA</strong>`;
+            // Show predicted salary range
+            $('result').innerHTML = `💰 Estimated Salary Range: <strong>${result.lower_lpa} LPA – ${result.upper_lpa} LPA</strong>`;
 
-        // Fetch stats for comparison
-        const stats = await fetchStats();
-        const idx = stats.professions.indexOf(job);
-        const profAvg = idx >= 0 ? stats.avg_salary_lpa[idx] : 0;
+            // Fetch stats for comparison
+            const stats = await fetchStats();
+            const idx = stats.professions.indexOf(job);
+            const profAvg = idx >= 0 ? stats.avg_salary_lpa[idx] : 0;
 
-        // Compute predicted mid
-        const predictedMid = (Number(result.lower_lpa) + Number(result.upper_lpa)) / 2;
+            // Compute predicted mid
+            const predictedMid = (Number(result.lower_lpa) + Number(result.upper_lpa)) / 2;
 
-        // Difference & percent
-        const diff = (predictedMid - profAvg).toFixed(2);
-        const pct = profAvg ? ((predictedMid - profAvg) / profAvg * 100).toFixed(1) : '0';
+            // Difference & percent
+            const diff = (predictedMid - profAvg).toFixed(2);
+            const pct = profAvg ? ((predictedMid - profAvg) / profAvg * 100).toFixed(1) : '0';
 
-        // Update comparison info
-        $('compareInfo').innerHTML = `
+            // Update comparison info
+            $('compareInfo').innerHTML = `
             <strong>${job} average:</strong> ${profAvg} LPA <br/>
             <strong>Your predicted:</strong> ${predictedMid.toFixed(2)} LPA <br/>
             ${diff >= 0 ? `▲ +${diff} LPA (${pct}%) above average` : `▼ ${Math.abs(diff)} LPA (${Math.abs(pct)}%) below average`}
-        `;
+           `;
 
-        // Update doughnut chart
-        createCompareChart($('compareChart'), profAvg, predictedMid);
+            // Update doughnut chart
+            createCompareChart($('compareChart'), profAvg, predictedMid);
 
-        // Update salary vs experience chart for selected job
-        const salaryArr = stats.salary_vs_exp[job] || [];
-        if (salaryArr.length) createSalaryExpChart($('salaryExpChart'), job, salaryArr);
+            // Update salary vs experience chart for selected job
+            const salaryArr = stats.salary_vs_exp[job] || [];
+            if (salaryArr.length) createSalaryExpChart($('salaryExpChart'), job, salaryArr);
 
-    } catch (err) {
-        console.error(err);
-        $('result').innerHTML = "⚠️ Server unreachable. Try again later.";
-    }
-});
+            // ---------- 🧠 NEW: Generate and display recommendations ----------
+            const recText = getRecommendation(job, experience, diff, skills, certifications);
+            $('recommendationBox').innerHTML = `<div class="recommendation-text">${recText}</div>`;
+
+        } catch (err) {
+            console.error(err);
+            $('result').innerHTML = "⚠️ Server unreachable. Try again later.";
+        }
+    });
+
 
 });
