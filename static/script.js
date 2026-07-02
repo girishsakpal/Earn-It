@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const labels = salaryArray.map((_, i) => i + "y");
         salaryExpChart = new Chart(ctx, {
             type: 'line',
-            data: { labels, datasets: [{ label: prof + ' — Salary vs Experience (LPA)', data: salaryArray, fill: false, tension: 0.2, pointRadius: 2 }] },
+            data: { labels, datasets: [{ label: prof + ' - Salary vs Experience (LPA)', data: salaryArray, fill: false, tension: 0.2, pointRadius: 2 }] },
             options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
         });
     }
@@ -110,9 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         images.forEach(img => {
             const div = document.createElement('div');
             div.className = "card chart-card";
-            const caption = img === "model_comparison.png" ? "Model Comparison — R² Score"
-                : img.includes("pred_vs_actual") ? img.replace("_pred_vs_actual.png", "") + " — Predicted vs Actual"
-                    : img.replace("_residuals.png", "") + " — Residuals Distribution";
+            const caption = img === "model_comparison.png" ? "Model Comparison: R² Score"
+                : img.includes("pred_vs_actual") ? img.replace("_pred_vs_actual.png", "") + " - Predicted vs Actual"
+                    : img.replace("_residuals.png", "") + " - Residuals Distribution";
             div.innerHTML = `<img src="../static/${img}" style="width:100%; display:block; margin-bottom:6px;" alt="${caption}"><div style="text-align:center; font-size:0.9rem; color: var(--muted);">${caption}</div>`;
             modelImagesContainer.appendChild(div);
         });
